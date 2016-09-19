@@ -93,6 +93,18 @@ for testing, etc.  To that end, we propose the definition of a filesystem type,
 and injection mechanisms to allow user-customization of the filesystem backend
 used by the free functions provided by the Filesystem TS.</p>
 
+<p>This proposal is pure-library, OS and compiler agnostic, and is
+backwards compatible with any existing code written against the
+Filesystem TS. It has not yet been implemented in this form. However,
+the filesystems at use in Google production work in roughly this way
+with small differences.  In the Google design, multiple filesystems
+are present at once, they are all pinned into the filesystem at some
+root (/memfile, /virtualfs, etc) with the OS local filesystem as the
+generic fallback.  This works for us because we have no symlinks.
+Once symlinks are in the equation, the design has to shift to
+something like what we are describing.
+</p>
+
 <h2 id="design">Design Choices</h2>
 
 <p>The biggest point of discussion in the design for filesystem injection is
@@ -110,6 +122,11 @@ underlying filesystem in a fashion congruent with any of the above designs.</p>
 <!--Rationale for using the non-throwing versions: it's more general in
 the case of status(), and it enables us to support exception-disabled
 environments. -->
+
+<p>Under this design, the expected cost is bounded by following an
+atomic pointer plus a vtable dereference. In comparison to the
+overhead of performing I/O through the OS, this is expected to be
+negligible.</p>
 
 <!-- Rationale for using atomic instead of shared_ptr: simplicity -->
 
