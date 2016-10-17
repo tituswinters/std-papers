@@ -210,6 +210,8 @@ requirements of <code>filesystem</code>.</p>
 public:
   filesystem() = default;
   virtual ~filesystem();
+  filesystem(const filesystem&) = delete;
+  filesystem& operator=(const filesystem&) = delete;
 
   virtual bool copy_file(const path&amp; from, const path&amp; to,
                          copy_options options, error_code&amp; ec) const noexcept = 0;
@@ -584,7 +586,7 @@ specified:</p>
   to by <code>p</code> to <code>new_time</code><del>, as if by POSIX
   <code>futimens()</code></del>.</li>
 <li><del><i>Throws:</i> As specified in Error reporting (27.5.6.5).</del></li>
-<li><del>[<i>Note</i>: A postcondition of <code>last_write_time(p) ==
+<li><del>[<i>Note:</i> A postcondition of <code>last_write_time(p) ==
   new_time</code> is not specified since it might not hold for file systems
   with coarse time granularity. — <i>end note</i>]</del></li>
 </ul>
@@ -794,7 +796,7 @@ specified:</p>
   </p><ul>
   <li>If the attributes indicate a regular file, <del>as if by POSIX
     <code>S_ISREG</code>,</del> return
-    <code>file_status(file_type::regular)</code>. [<i>Note</i>:
+    <code>file_status(file_type::regular)</code>. [<i>Note:</i>
     <code>file_type::regular</code> implies appropriate
     <code>&lt;fstream&gt;</code> operations would succeed, assuming no
     hardware, permission, access, or file system race errors. Lack of
@@ -966,37 +968,37 @@ base class <code>filesystem</code>.</p>
 <pre>class default_filesystem_impl : public filesystem {  <i>// exposition only</i>
 public:
   virtual bool copy_file(const path&amp; from, const path&amp; to,
-                         copy_options options, error_code&amp; ec) const noexcept;
-  virtual bool create_directory(const path&amp; p, error_code&amp; ec) const noexcept;
+                         copy_options options, error_code&amp; ec) noexcept;
+  virtual bool create_directory(const path&amp; p, error_code&amp; ec) noexcept;
   virtual bool create_directory(const path&amp; p, const path&amp; existing_p,
-                                error_code&amp; ec) const noexcept;
+                                error_code&amp; ec) noexcept;
   virtual void create_directory_symlink(
-      const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) const noexcept;
+      const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) noexcept;
   virtual void create_hard_link(const path&amp; to, const path&amp; new_hard_link,
-                                error_code&amp; ec) const noexcept;
+                                error_code&amp; ec) noexcept;
   virtual void create_symlink(const path&amp; to, const path&amp; new_symlink,
-                              error_code&amp; ec) const noexcept;
-  virtual path current_path(error_code&amp; ec) const noexcept;
-  virtual void current_path(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) const noexcept;
-  virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual uintmax_t hard_link_count(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual file_time_type last_write_time(const path&amp; p, error_code&amp; ec) const noexcept;
+                              error_code&amp; ec) noexcept;
+  virtual path current_path(error_code&amp; ec) noexcept;
+  virtual void current_path(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) noexcept;
+  virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual uintmax_t hard_link_count(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual file_time_type last_write_time(const path&amp; p, error_code&amp; ec) noexcept;
   virtual void last_write_time(const path&amp; p, file_time_type new_time,
-                               error_code&amp; ec) const noexcept;
-  virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) const noexcept;
-  virtual path read_symlink(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual bool remove(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual void rename(const path&amp; old_p, const path&amp; new_p, erorr_code&amp; ec) const noexcept;
-  virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) const noexcept;
-  virtual space_info space(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual file_status status(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual path system_complete(const path&amp; p, error_code&amp; ec) const noexcept;
-  virtual path temp_directory_path(error_code&amp; ec) const noexcept;
+                               error_code&amp; ec) noexcept;
+  virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) noexcept;
+  virtual path read_symlink(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual bool remove(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual void rename(const path&amp; old_p, const path&amp; new_p, erorr_code&amp; ec) noexcept;
+  virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) noexcept;
+  virtual space_info space(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual file_status status(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual path system_complete(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual path temp_directory_path(error_code&amp; ec) noexcept;
 
   virtual unique_ptr&lt;directory_traverser&gt; directory_traverser(
-      const path&amp; p, directory_options options, error_code&amp; ec) const noexcept;
+      const path&amp; p, directory_options options, error_code&amp; ec) noexcept;
 };
 </pre>
 
@@ -1004,7 +1006,7 @@ public:
 [default_filesystem_impl.members]</h3>
 <h4>27.10.?.1.1 Create directory
   [default_filesystem_impl.create_directory]</h4>
-<pre class="function">virtual bool create_directory(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual bool create_directory(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1015,7 +1017,7 @@ public:
 <h4>27.10.?.1.2 Create directory symlink
   [default_filesystem_impl.create_directory_symlink]</h4>
 <pre class="function">virtual void create_directory_symlink(
-    const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) const noexcept;
+    const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1024,7 +1026,7 @@ public:
 
 <h4>27.10.?.1.3 Create hard link [default_filesystem.create_hard_link]</h4>
 <pre class="function">virtual void create_hard_link(const path&amp; to, const path&amp; new_hard_link,
-                              error_code&amp; ec) const noexcept;
+                              error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1033,7 +1035,7 @@ public:
 
 <h4>27.10.?.1.4 Create symlink [default_filesystem.create_symlink]</h4>
 <pre class="function">virtual void create_symlink(const path&amp; to, const path&amp; new_symlink,
-                            error_code&amp; ec) const noexcept;
+                            error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1041,14 +1043,14 @@ public:
 </ul>
 
 <h4>27.10.?.1.5 Current path [default_filesystem.current_path]</h4>
-<pre class="function">virtual path current_path(error_code&amp; ec) const noexcept;
+<pre class="function">virtual path current_path(error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Obtains the current working directory as if by POSIX
   <code>getcwd()</code>.</li>
 </ul>
 
-<pre class="function">virtual void current_path(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual void current_path(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1056,7 +1058,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.6 Equivalent [default_filesystem.equivalent]</h4>
-<pre class="function">virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) const noexcept;
+<pre class="function">virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Determines equivalence of the two files as if by the
@@ -1066,7 +1068,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.7 File size [default_filesystem.file_size]</h4>
-<pre class="function">virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Determines the size as if by the value of the POSIX
@@ -1075,7 +1077,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.8 Last write time[default_filesystem.last_write_time]</h4>
-<pre class="function">virtual file_time_type last_write_time(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual file_time_type last_write_time(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Determines the modification time as if by the value of
@@ -1084,7 +1086,7 @@ public:
 </ul>
 
 <pre class="function">virtual void last_write_time(const path&amp; p, file_time_type new_time,
-                             error_code&amp; ec) const noexcept;
+                             error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Sets the modification time as if by POSIX
@@ -1092,7 +1094,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.9 Permissions [default_filesystem.permissions]</h4>
-<pre class="function">virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) const noexcept;
+<pre class="function">virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Applies the effective permission bits as if by POSIX
@@ -1100,7 +1102,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.10 Remove [default_filesystem.remove]</h4>
-<pre class="function">virtual bool remove(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual bool remove(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Removes the file as if by POSIX <code>remove()</code>.
@@ -1108,7 +1110,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.11 Rename [default_filesystem.rename]</h4>
-<pre class="function">virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Renames the file as if by POSIX <code>rename()</code>.
@@ -1116,7 +1118,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.12 Resize file [default_filesystem.resize_file]</h4>
-<pre class="function">virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) const noexcept;
+<pre class="function">virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Achieves its postconditions as if by POSIX
@@ -1124,7 +1126,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.13 Space [default_filesystem.space]</h4>
-<pre class="function">virtual space_info space(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual space_info space(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> The value of the <code>space_info</code> object is
@@ -1137,7 +1139,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.14 Status [default_filesystem.status]</h4>
-<pre class="function">virtual file_status status(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual file_status status(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Determines the attributes as if by POSIX
@@ -1145,7 +1147,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.15 Symlink status [default_filesystem.symlink_status]</h4>
-<pre class="function">virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) const noexcept;
+<pre class="function">virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) noexcept;
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Determines the attributes as if by POSIX
@@ -1162,7 +1164,7 @@ public:
   virtual const directory_entry&amp; dereference() const = 0;
   virtual void increment(error_code&amp; ec) noexcept = 0;
   virtual bool equal(const directory_traverser&amp; rhs) const = 0;
-  virtual bool is_end() const = 0;
+  virtual bool is_end() const noexcept = 0;
   virtual unique_ptr&lt;directory_traverser&gt; clone() const = 0;
 };
 </pre>
@@ -1404,7 +1406,7 @@ directory_iterator&amp; increment(error_code&amp; ec) noexcept;
   <td><b><code>!(lhs.traverser == nullptr || lhs.traverser-&gt;is_end())</code>
     </b></td>
   <td><code>false</code></td>
-  <td><code>lhs.traverser-&gt;equals(*rhs.traverser)</code></td>
+  <td><code>lhs.traverser-&gt;equal(*rhs.traverser)</code></td>
 </tr>
 </tbody></table>
 </li>
@@ -1429,16 +1431,18 @@ implementation is permitted to provide equivalent functionality without
 providing a variable with this name.</p>
 
 <p><code>current_filesystem</code> will be initialized to
-<code>&amp;default_filesystem()</code> before the body of <code>main()</code>
-begins execution (implementations are encouraged to initialize it
-earlier than required).</p>
+<code>&amp;default_filesystem()</code> before the body
+of <code>main()</code> begins execution. [<i>Note</i> Implementations
+are encouraged to initialize before main() begins execution. --<i>end
+note</i>]</p>
 
 <h3>27.10.?.2 Inject filesystem [fs.inject.inject]</h3>
 <pre class="function">void inject_filesystem(filesystem&amp; fs);
 </pre>
 <ul class="function">
-<li><i>Effects:</i> Equivalent to <code>current_filesystem = &amp;fs</code>.
-</li><li><i>Remarks:</i> <code>fs</code> must remain live until the next call
+<li><i>Effects:</i> Equivalent to <code>current_filesystem =
+  addressof(fs);</code>.</li>
+<li><i>Remarks:</i> <code>fs</code> must remain live until the next call
   to <code>inject_filesystem</code>, and until all pending calls to
   filesystem operation functions have completed execution.</li>
 </ul>
@@ -2013,7 +2017,7 @@ return result;
   </p><ul>
   <li>If the attributes indicate a regular file, as if by POSIX
     <code>S_ISREG</code>, return
-    <code>file_status(file_type::regular)</code>. [<i>Note</i>:
+    <code>file_status(file_type::regular)</code>. [<i>Note:</i>
     <code>file_type::regular</code> implies appropriate
     <code>&lt;fstream&gt;</code> operations would succeed, assuming no
     hardware, permission, access, or file system race errors. Lack of
