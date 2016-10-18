@@ -214,18 +214,18 @@ public:
   filesystem& operator=(const filesystem&) = delete;
 
   virtual bool copy_file(const path&amp; from, const path&amp; to,
-                         copy_options options, error_code&amp; ec) const noexcept = 0;
-  virtual bool create_directory(const path&amp; p, error_code&amp; ec) const noexcept = 0;
+                         copy_options options, error_code&amp; ec) noexcept = 0;
+  virtual bool create_directory(const path&amp; p, error_code&amp; ec) noexcept = 0;
   virtual bool create_directory(const path&amp; p, const path&amp; existing_p,
-                                error_code&amp; ec) const noexcept = 0;
+                                error_code&amp; ec) noexcept = 0;
   virtual void create_directory_symlink(
-      const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) const noexcept = 0;
+      const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) noexcept = 0;
   virtual void create_hard_link(const path&amp; to, const path&amp; new_hard_link,
-                                error_code&amp; ec) const noexcept = 0;
+                                error_code&amp; ec) noexcept = 0;
   virtual void create_symlink(const path&amp; to, const path&amp; new_symlink,
-                              error_code&amp; ec) const noexcept = 0;
-  virtual path current_path(error_code&amp; ec) const noexcept = 0;
-  virtual void current_path(const path&amp; p, error_code&amp; ec) const noexcept = 0;
+                              error_code&amp; ec) noexcept = 0;
+  virtual path current_path(error_code&amp; ec) const = 0;
+  virtual void current_path(const path&amp; p, error_code&amp; ec) noexcept = 0;
   virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) const noexcept = 0;
   virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) const noexcept = 0;
   virtual uintmax_t hard_link_count(const path&amp; p, error_code&amp; ec) const noexcept = 0;
@@ -233,18 +233,18 @@ public:
   virtual void last_write_time(const path&amp; p, file_time_type new_time,
                                error_code&amp; ec) const noexcept = 0;
   virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) const noexcept = 0;
-  virtual path read_symlink(const path&amp; p, error_code&amp; ec) const noexcept = 0;
-  virtual bool remove(const path&amp; p, error_code&amp; ec) const noexcept = 0;
-  virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) const noexcept = 0;
-  virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) const noexcept = 0;
+  virtual path read_symlink(const path&amp; p, error_code&amp; ec) const = 0;
+  virtual bool remove(const path&amp; p, error_code&amp; ec) noexcept = 0;
+  virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) noexcept = 0;
+  virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) noexcept = 0;
   virtual space_info space(const path&amp; p, error_code&amp; ec) const noexcept = 0;
   virtual file_status status(const path&amp; p, error_code&amp; ec) const noexcept = 0;
   virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) const noexcept = 0;
-  virtual path system_complete(const path&amp; p, error_code&amp; ec) const noexcept = 0;
-  virtual path temp_directory_path(error_code&amp; ec) const noexcept = 0;
+  virtual path system_complete(const path&amp; p, error_code&amp; ec) const = 0;
+  virtual path temp_directory_path(error_code&amp; ec) = 0;
 
   virtual unique_ptr&lt;directory_traverser&gt; directory_traverser(
-      const path&amp; p, directory_options options, error_code&amp; ec) const noexcept = 0;
+      const path&amp; p, directory_options options, error_code&amp; ec) const = 0;
 };
 </pre>
 
@@ -252,7 +252,7 @@ public:
 
 <h4>27.10.?.1.1 Copy file [filesystem.copy_file]</h4>
 <pre class="function">virtual bool copy_file(const path&amp; from, const path&amp; to,
-                       copy_options options, error_code&amp; ec) const noexcept = 0;
+                       copy_options options, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -296,7 +296,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.2 Create directory [filesystem.create_directory]</h4>
-<pre class="function">virtual bool create_directory(const path&amp; p, error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual bool create_directory(const path&amp; p, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -322,7 +322,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <pre class="function">virtual bool create_directory(const path&amp; p, const path&amp; existing_p,
-                              error_code&amp; ec) const noexcept = 0;
+                              error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -354,7 +354,7 @@ specified:</p>
 <h4>27.10.?.1.3 Create directory symlink [filesystem.create_directory_symlink]
 </h4>
 <pre class="function">virtual void create_directory_symlink(
-    const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) const noexcept = 0;
+    const path&amp; to, const path&amp; new_symlink, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -383,7 +383,7 @@ system. — <i>end note</i>]</del></li>
 <blockquote class="stdins">
 <h4>27.10.?.1.4 Create hard link [filesystem.create_hard_link]</h4>
 <pre class="function">virtual void create_hard_link(const path&amp; to, const path&amp; new_hard_link,
-                              error_code&amp; ec) const noexcept = 0;
+                              error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -413,7 +413,7 @@ specified:</p>
 <blockquote class="stdins">
 <h4>27.10.?.1.5 Create symlink [filesystem.create_symlink]</h4>
 <pre class="function">virtual void create_symlink(const path&amp; to, const path&amp; new_symlink,
-                            error_code&amp; ec) const noexcept = 0;
+                            error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -437,7 +437,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.6 Current path [filesystem.current_path]</h4>
-<pre class="function">virtual path current_path(error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual path current_path(error_code&amp; ec) const = 0;
 </pre>
 </blockquote>
 
@@ -463,7 +463,7 @@ specified:</p>
 </blockquote>
 
 <blockquote class="stdins">
-<pre class="function">virtual void current_path(const path&amp; p, error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual void current_path(const path&amp; p, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -658,7 +658,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.13 Remove [filesystem.remove]</h4>
-<pre class="function">virtual bool remove(const path&amp; p, error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual bool remove(const path&amp; p, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -680,7 +680,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.14 Rename [filesystem.rename]</h4>
-<pre class="function">virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual void rename(const path&amp; old_p, const path&amp; new_p, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -703,7 +703,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.15 Resize file [filesystem.resize_file]</h4>
-<pre class="function">virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) noexcept = 0;
 </pre>
 </blockquote>
 
@@ -857,7 +857,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.19 System complete [filesystem.system_complete]</h4>
-<pre class="function">virtual path system_complete(const path&amp; p error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual path system_complete(const path&amp; p error_code&amp; ec) const = 0;
 </pre>
 </blockquote>
 
@@ -893,7 +893,7 @@ specified:</p>
 
 <blockquote class="stdins">
 <h4>27.10.?.1.20 Temp directory path [filesystem.temp_directory_path]</h4>
-<pre class="function">virtual path temp_directory_path(error_code&amp; ec) const noexcept = 0;
+<pre class="function">virtual path temp_directory_path(error_code&amp; ec) const = 0;
 </pre>
 </blockquote>
 
@@ -921,7 +921,7 @@ specified:</p>
 <blockquote class="stdins">
 <h4>27.10.?.1.21 Directory traverser [filesystem.directory_traverser]</h4>
 <pre class="function">virtual unique_ptr&lt;directory_traverser&gt; directory_traverser(
-    const path&amp; p, directory_options options, error_code&amp; ec) const noexcept = 0;
+    const path&amp; p, directory_options options, error_code&amp; ec) const = 0;
 </pre>
 </blockquote>
 
@@ -978,7 +978,7 @@ public:
                                 error_code&amp; ec) noexcept;
   virtual void create_symlink(const path&amp; to, const path&amp; new_symlink,
                               error_code&amp; ec) noexcept;
-  virtual path current_path(error_code&amp; ec) noexcept;
+  virtual path current_path(error_code&amp; ec);
   virtual void current_path(const path&amp; p, error_code&amp; ec) noexcept;
   virtual bool equivalent(const path&amp; p1, const path&amp; p2, error_code&amp; ec) noexcept;
   virtual uintmax_t file_size(const path&amp; p, error_code&amp; ec) noexcept;
@@ -987,18 +987,18 @@ public:
   virtual void last_write_time(const path&amp; p, file_time_type new_time,
                                error_code&amp; ec) noexcept;
   virtual void permissions(const path&amp; p, perms prms, error_code&amp; ec) noexcept;
-  virtual path read_symlink(const path&amp; p, error_code&amp; ec) noexcept;
+  virtual path read_symlink(const path&amp; p, error_code&amp; ec);
   virtual bool remove(const path&amp; p, error_code&amp; ec) noexcept;
   virtual void rename(const path&amp; old_p, const path&amp; new_p, erorr_code&amp; ec) noexcept;
   virtual void resize_file(const path&amp; p, uintmax_t new_size, error_code&amp; ec) noexcept;
   virtual space_info space(const path&amp; p, error_code&amp; ec) noexcept;
   virtual file_status status(const path&amp; p, error_code&amp; ec) noexcept;
   virtual file_status symlink_status(const path&amp; p, error_code&amp; ec) noexcept;
-  virtual path system_complete(const path&amp; p, error_code&amp; ec) noexcept;
-  virtual path temp_directory_path(error_code&amp; ec) noexcept;
+  virtual path system_complete(const path&amp; p, error_code&amp; ec);
+  virtual path temp_directory_path(error_code&amp; ec);
 
   virtual unique_ptr&lt;directory_traverser&gt; directory_traverser(
-      const path&amp; p, directory_options options, error_code&amp; ec) noexcept;
+      const path&amp; p, directory_options options, error_code&amp; ec);
 };
 </pre>
 
@@ -1043,7 +1043,7 @@ public:
 </ul>
 
 <h4>27.10.?.1.5 Current path [default_filesystem.current_path]</h4>
-<pre class="function">virtual path current_path(error_code&amp; ec) noexcept;
+<pre class="function">virtual path current_path(error_code&amp; ec);
 </pre>
 <ul class="function">
 <li><i>Remarks:</i> Obtains the current working directory as if by POSIX
