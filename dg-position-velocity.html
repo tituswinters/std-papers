@@ -2,7 +2,7 @@
   <head><title>C++ Stability, Velocity, and Deployment Plans</title></head>
   <body>
     <h1>C++ Stability, Velocity, and Deployment Plans</h1>
-    <p>Titus Winters, Bjarne Stroustroup, Daveed Vandevoorde</p>
+    <p>Titus Winters, Bjarne Stroustrup, Daveed Vandevoorde</p>
     <p>TODO: Figure out sign-off. Consider asking for additional
     signatories, either from Direction Group in particular or broadly
     through the committee</p>
@@ -13,8 +13,8 @@
     of exciting new features? Or is it perhaps a language known for
     great stability over a long period? Do we believe that upgrading
     to a new language version should be effortless? If so, how do we
-    reconcile those effortless upgrades with a practical need to fix
-    past mistakes? If we instead prioritize stability over all else,
+    reconcile those effortless upgrades with a practical need to evolve the language?
+    If we instead prioritize stability over all else,
     are we bound to move slowly - only making a change when we are
     certain it is correct and will never need future fixes?</p>
 
@@ -71,7 +71,7 @@
     your organization took a compiler update without having to fix
     your codebase? Even a minor compiler release tends to require some
     effort. Changing standard libraries is often near impossible - at
-    best it is significant effort. What makes us believe that enabling
+    best it is a significant effort. What makes us believe that enabling
     a new version of the language is going to be any less effort? Why
     are we worried about breakages that are likely lower-cost than
     updating compiler versions?</p>
@@ -86,7 +86,7 @@
     be dominated by those existing costs, we are still serving our
     users well.</p>
 
-    <p>Proceduerally, a change to the toolchain (be it compiler update
+    <p>Procedurally, a change to the toolchain (be it compiler update
     or language version change) is a task that our users are already
     generally tackling as an explicit task - someone or some team is
     assigned to do this. For language updates, that upgrade period is
@@ -136,7 +136,8 @@
     velocity that keeps most users happy.</p>
 
     <p>This would effectively update the compatibility promise of the
-    standard:<blockquote>New versions of the standard will not change
+    standard:
+    <blockquote>New versions of the standard will not change
     the behavior of existing well-behaved user code. In rare instances
     a standard change may cause build breaks, but not run-time
     difference, <b>without providing diagnostic mechanisms in the
@@ -169,7 +170,7 @@
     change?</p>
 
     <p>We believe the community would be well served if we defined
-    what is expected of "well behaved" user code. With respect to the
+    what is expected of "well-behaved" user code. With respect to the
     <code>std::accumulate</code> example, this might include "The
     standard library assumes that if a user-defined type has both move
     constructor and copy constructor, the move constructor is
