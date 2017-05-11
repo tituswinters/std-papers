@@ -1,0 +1,197 @@
+<html>
+  <head><title>C++ Stability, Velocity, and Deployment Plans</title></head>
+  <body>
+    <h1>C++ Stability, Velocity, and Deployment Plans</h1>
+    <p>Titus Winters, Bjarne Stroustroup, Daveed Vandevoorde</p>
+    <p>TODO: Figure out sign-off. Consider asking for additional
+    signatories, either from Direction Group in particular or broadly
+    through the committee</p>
+    <h2>Introduction</h1>
+
+    <p>Over the past few years, the committee has increasingly
+    demonstrated a lack of agreement on priorities. Is C++ a language
+    of exciting new features? Or is it perhaps a language known for
+    great stability over a long period? Do we believe that upgrading
+    to a new language version should be effortless? If so, how do we
+    reconcile those effortless upgrades with a practical need to fix
+    past mistakes? If we instead prioritize stability over all else,
+    are we bound to move slowly - only making a change when we are
+    certain it is correct and will never need future fixes?</p>
+
+    <p>It seems that members of the committee (and indeed the authors
+    of this paper) have held differing (perhaps even inconsistent)
+    positions on these questions. In this position paper we aim
+    to discuss the themes we've seen and heard on this topic in
+    committee meetings, how those match our actual experience, and
+    propose a concrete policy that the committee as a whole could
+    adopt.</p>
+
+    <h1>Present Policy and Practice</h1>
+    <p>While there is no concrete policy written down as part of the
+    standard itself, we believe that many/most committee members would
+    agree that the current policy is roughly
+    <blockquote>New versions of the standard will not change the
+    behavior of existing well-behaved user code. In rare instances a
+    standard change may cause build breaks, but not run-time
+    difference. ABI changes should be avoided as long as possible, and
+    be as infrequent as possible.</blockquote>
+    </p>
+
+    <p>Note that much hangs on the definition of "well-behaved user
+    code." Currently the standard carves out a few things as undefined
+    behavior with the intent of allowing for future changes without
+    breakage. This includes (but is not limited to) "taking the
+    address of a member function of a type from
+    namespace <code>std</code> is UB, as well as more commonly-known
+    things like broad prohibitions on adding names to
+    namespace <code>std</code>. Do these prohibitions suffice to avoid
+    breakage? Of course not. In many cases they are poorly publicized,
+    but more fundamentally we make changes that could even break those
+    users that do obey the few published prohibitions. For instance,
+    users may still rely upon <code>using namespace std</code> and write
+    in the global namespace - any overlap in new names
+    in <code>std</code> and their global namespace is an immediate
+    break. Using the global namespace is not forbidden. Nor are using
+    directives. What gives us the "right" to break such code?</p>
+
+    <p>More subtly, with SFINAE and existing template metaprogramming
+    facilities, there is sufficient introspection in the language
+    already to (in theory) have runtime/semantic dependence on nearly
+    any library or language feature. Nothing in the standard declares
+    it to be UB or otherwise gives the committee the right to break
+    code that relies on things like "<code>vector::emplace_back</code>
+    returns <code>void</code>" but you can certainly imagine
+    constructing code that relies on that through metaprogramming
+    trickery. We pretty clearly do not consider that behavior "in
+    bounds" - metaprogramming users do not have an expectation of free
+    upgrades between language versions. What gives us the "right" to
+    break such metaprogramming code?</p>
+
+    <p>In a completely different vein: When was the last time that
+    your organization took a compiler update without having to fix
+    your codebase? Even a minor compiler release tends to require some
+    effort. Changing standard libraries is often near impossible - at
+    best it is significant effort. What makes us believe that enabling
+    a new version of the language is going to be any less effort? Why
+    are we worried about breakages that are likely lower-cost than
+    updating compiler versions?</p>
+
+    <h1>Proposal - Velocity, Deployment Plans</h1>
+    <p>We suggest that the level of concern that the committee
+    currently holds for breakage may be ill-founded - the cost paid
+    during a compiler update stemming from from user error is already
+    significant. We should recognize that all compiler/standard
+    library updates come with some cost - so long as
+    any <emph>intentional</emph> breakage on our part is expected to
+    be dominated by those existing costs, we are still serving our
+    users well.</p>
+
+    <p>Proceduerally, a change to the toolchain (be it compiler update
+    or language version change) is a task that our users are already
+    generally tackling as an explicit task - someone or some team is
+    assigned to do this. For language updates, that upgrade period is
+    the exact time that we want to provide diagnostics and refactoring
+    tools designed to make the upgrade process low-risk and
+    low-effort. Consider the cost reduction for users if we expect them
+    to use the following process when updating:</p>
+
+    <ol>
+      <li>Update to a current version of the compiler without
+        changing language versions. For example, update to a current
+        version of gcc while staying at C++14, rather than updating to
+        current gcc and updating to C++17 mode at the same time.</li>
+      <li>Turn on diagnostics in that current compiler version to
+        identify places where behavior will change in the next language
+        version.</li>
+      <li>Evaluate those changes, fix them or mark them
+        acceptable. For comparison, consider the idiom of extra
+        parentheses in <code>if ((a = Foo()))</code> - a minor
+        re-phrasing/re-formatting of the code tags this potential bug as
+        intentional and known-safe. In this model, providing
+        C++(n-1)-compatible mechanisms to opt-out of an upcoming behavior
+        change becomes a new requirement for risky language changes.</li>
+      <li>Turn on the new language mode.</li>
+    </ol>
+
+    <p>This isn't a magic wand - we will still need to find ways to
+    have pre/post compatibility and consider cases where the necessary
+    updates cannot be done in sync (libraries with varying release
+    schedules), but it is potentially a significant power that the
+    committee is lacking right now.</p>
+
+    <p>In such a world, we argue that it is far easier to make
+    substantive changes to the language. For example, if we decide
+    that synthesizing operator &lt;=&gt; is the superior long-term
+    design, we can ask that compilers in C++(n-1) mode provide a
+    diagnostic for types that will have their behavior changed by the
+    new synthesis with an easy mechanism to opt out
+    (<code>=delete</code>). This hopefully allows for a smooth rollout
+    of more-invasive changes than we currently feel safe accepting. In
+    such a world, we can perhaps stop arguing about
+    the <emph>safety</emph> of such a change and focus more on the
+    long-term value of it and the safety of the deployment
+    strategy. In trade, we have to recognize what is already true:
+    upgrades are not free. If we focus on understanding and minimizing
+    the upgrade cost, we can find a balance between stability and
+    velocity that keeps most users happy.</p>
+
+    <p>This would effectively update the compatibility promise of the
+    standard:<blockquote>New versions of the standard will not change
+    the behavior of existing well-behaved user code. In rare instances
+    a standard change may cause build breaks, but not run-time
+    difference, <b>without providing diagnostic mechanisms in the
+    previous language version</b>. ABI changes should be avoided as
+    long as possible, and be as infrequent as
+    possible.</blockquote></p>
+
+    <h1>Proposal - Clear User Requirements</h1>
+    <p>However, in some cases the above does not suffice: we have
+    still not addressed our lack of guarantees for what types of
+    breaks are considered relevant. Lets consider the simple case of
+    <code>std::accumulate</code> and Peter Sommerlad's p0616. As
+    specified, <code>std::accumulate</code> is O(n^2) when invoked on
+    anything with an O(n) <code>operator+</code>,
+    like <code>std::string</code>. This is because the accumulated
+    object is copied at each step, rather than moved - by
+    specification. The only code anywhere that can be broken by making
+    changes to that specification is code with user-defined types
+    where move is not an optimization of copy - and yet we are fearful
+    to proceed. A "safe" deployment plan for this issue would likely
+    require two language versions: one to introduce
+    a <code>std::accumulate</code> variant that explicitly chooses the
+    existing copy behavior, and a second to change the default - and
+    with such a plan we are still left with both versions
+    indefinitely. Or, we can collectively act boldly and say "Anyone
+    broken by this change deserves it", which is likely true. Still,
+    it would be more satisfying and healthy for the community in the
+    long term to provide clear guidance - what exactly is it that we
+    expect from users? Why do they "deserve it" to be broken by such a
+    change?</p>
+
+    <p>We believe the community would be well served if we defined
+    what is expected of "well behaved" user code. With respect to the
+    <code>std::accumulate</code> example, this might include "The
+    standard library assumes that if a user-defined type has both move
+    constructor and copy constructor, the move constructor is
+    semantically equivalent and no less efficient." More generally
+    this would include discussions of namespace <code>std</code> and
+    metaprogramming/SFINAE guarantees (specifically, our lack of
+    guarantees).</p>
+
+    <p>This would effectively update the compatibility promise of the
+    standard:</p>
+
+    <blockquote>New versions of the standard will not change the
+    behavior of existing well-behaved user code <b>as defined by
+    (forthcoming rules)</b>. In rare instances a standard change may
+    cause build breaks, but not run-time difference. ABI changes
+    should be avoided as long as possible, and be as infrequent as
+    possible.</blockquote>
+
+    <h1>Issues</h1>
+    <p>[TODO]</p>
+
+    <h1>Acknowledgements</h1>
+    <p>[TODO]</p>
+</body>
+</html>
