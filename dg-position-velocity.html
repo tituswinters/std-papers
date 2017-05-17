@@ -13,10 +13,10 @@
     of exciting new features? Or is it perhaps a language known for
     great stability over a long period? Do we believe that upgrading
     to a new language version should be effortless? If so, how do we
-    reconcile those effortless upgrades with a practical need to evolve the language?
-    If we instead prioritize stability over all else,
-    are we bound to move slowly - only making a change when we are
-    certain it is correct and will never need future fixes?</p>
+    reconcile those effortless upgrades with a practical need to
+    evolve the language?  If we instead prioritize stability over all
+    else, are we bound to move slowly - only making a change when we
+    are certain it is correct and will never need future fixes?</p>
 
     <p>It seems that members of the committee (and indeed the authors
     of this paper) have held differing (perhaps even inconsistent)
@@ -32,9 +32,10 @@
     agree that the current policy is roughly
     <blockquote>New versions of the standard will not change the
     behavior of existing well-behaved user code. In rare instances a
-    standard change may cause build breaks, but not run-time
-    difference. ABI changes should be avoided as long as possible, and
-    be as infrequent as possible.</blockquote>
+    standard change may cause build breaks, and silent changes should
+    be even rarer. All changes should in principle be statically
+    detectable. ABI changes should be avoided as long as possible,
+    and be as infrequent as possible.</blockquote>
     </p>
 
     <p>Note that much hangs on the definition of "well-behaved user
@@ -137,13 +138,15 @@
 
     <p>This would effectively update the compatibility promise of the
     standard:
-    <blockquote>New versions of the standard will not change
-    the behavior of existing well-behaved user code. In rare instances
-    a standard change may cause build breaks, but not run-time
-    difference, <b>without providing diagnostic mechanisms in the
-    previous language version</b>. ABI changes should be avoided as
-    long as possible, and be as infrequent as
-    possible.</blockquote></p>
+    <blockquote>New versions of the standard will not change the
+    behavior of existing well-behaved user code. In rare instances a
+    standard change may cause build breaks, and silent changes should
+    be even rarer. <b>All behavior changes should be statically
+    detectable in the previous language version and have
+    previous-version-compatible opt-out mechanics to preserve existing
+    behavior.</b> ABI changes should be avoided as long as possible,
+    and be as infrequent as possible.</blockquote>
+    </p>
 
     <h1>Proposal - Clear User Requirements</h1>
     <p>However, in some cases the above does not suffice: we have
@@ -185,7 +188,8 @@
     <blockquote>New versions of the standard will not change the
     behavior of existing well-behaved user code <b>as defined by
     (forthcoming rules)</b>. In rare instances a standard change may
-    cause build breaks, but not run-time difference. ABI changes
+    cause build breaks, and silent changes should be even rarer. All
+    changes should in principle be statically detectable. ABI changes
     should be avoided as long as possible, and be as infrequent as
     possible.</blockquote>
 
